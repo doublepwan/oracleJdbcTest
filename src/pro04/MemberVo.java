@@ -2,7 +2,7 @@ package pro04;
 
 public class MemberVo {
 	
-	//MemberVo ÀÛ¼º
+	//MemberVo ìž‘ì„±
 	private int id;
 	private String name;
 	private String email;
