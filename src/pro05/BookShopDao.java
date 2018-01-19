@@ -64,9 +64,9 @@ public class BookShopDao {
 
 			psmt = conn.prepareStatement(query);
 			psmt.setInt(1, num);
-
+			
 			int count = psmt.executeUpdate();
-			System.out.println();
+			rentMsg(num);
 
 		} catch (ClassNotFoundException e) {
 			System.out.println("드라이버 로딩 실패 : " + e);
@@ -87,7 +87,46 @@ public class BookShopDao {
 
 
 	}
+	
+	public void rentMsg(int num) {
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
 
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			conn = DriverManager.getConnection(url, "webdb", "webdb");
+
+			String query = "select title from bookshop where id = ?";
+
+			psmt = conn.prepareStatement(query);
+			psmt.setInt(1, num);
+			rs = psmt.executeQuery();
+			while (rs.next()) {
+				String title = rs.getString("title");
+				System.out.println(title+"(가) 대여 됐습니다");
+			}
+
+		} catch (ClassNotFoundException e) {
+			System.out.println("드라이버 로딩 실패 : " + e);
+		} catch (SQLException e) {
+			System.out.println("error : " + e);
+		} finally {
+			try {
+				if (psmt != null) {
+					psmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				System.out.println("error : " + e);
+			}
+		}
+	}
+	
 	public List<BookVo> printAllBook() {
 		
 		Connection conn = null;
