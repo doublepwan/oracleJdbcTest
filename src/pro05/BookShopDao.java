@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import pro04.MemberVo;
 
 public class BookShopDao {
 
@@ -23,14 +22,12 @@ public class BookShopDao {
 			conn = DriverManager.getConnection(url, "webdb", "webdb");
 
 			String query = "";
-			query = "insert into bookshop values(seq_bookshop_id.nextval, ?, ?, ?, ?, ?)";
+			query = "insert into bookshop(id,title,author_name,state_code) VALUES(seq_bookshop_id.NEXTVAL,?,?,?)";
 
 			psmt = conn.prepareStatement(query);
 			psmt.setString(1, vo.getTitle());
-			psmt.setString(2, vo.getPubs());
-			psmt.setString(3, vo.getPubDate());
-			psmt.setString(4, vo.getAuthorName());
-			psmt.setInt(5, vo.getStateCode());
+			psmt.setString(2, vo.getAuthorName());
+			psmt.setInt(3, 1);
 
 			int count = psmt.executeUpdate();
 
@@ -53,11 +50,42 @@ public class BookShopDao {
 
 	}
 
-	public void rent(int num) {
-		BookVo vo = new BookVo();
-		if (vo.getStateCode() == 0) {
-			System.out.println(vo.getTitle() + " 이(가) 대여됐습니다.");
+	public void rent(int num,BookVo vo) {
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			conn = DriverManager.getConnection(url, "webdb", "webdb");
+
+			String query = "update bookshop set state_code = 0 " + 
+						   "where id = ?";
+
+			psmt = conn.prepareStatement(query);
+			psmt.setInt(1, num);
+
+			int count = psmt.executeUpdate();
+			
+			System.out.println(vo.getTitle()+"(가) 대여 됐습니다.");
+
+		} catch (ClassNotFoundException e) {
+			System.out.println("드라이버 로딩 실패 : " + e);
+		} catch (SQLException e) {
+			System.out.println("error : " + e);
+		} finally {
+			try {
+				if (psmt != null) {
+					psmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				System.out.println("error : " + e);
+			}
 		}
+
 
 	}
 
@@ -95,7 +123,7 @@ public class BookShopDao {
 				
 				bookList.add(vo);
 				
-				System.out.println("책 제목: " + bookTitle + ", " + "작가: "+ authorName + "," + "대여 유무: " + (stateCode == 0 ? "대여중" : "재고있음"));
+				System.out.println(bookId+" " + "책 제목: " + bookTitle + ", " + "작가: "+ authorName + "," + "대여 유무: " + (stateCode == 0 ? "대여중" : "재고있음"));
 			}
 
 		} catch (ClassNotFoundException e) {
