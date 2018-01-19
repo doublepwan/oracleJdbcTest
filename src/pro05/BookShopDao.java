@@ -50,7 +50,7 @@ public class BookShopDao {
 
 	}
 
-	public void rent(int num,BookVo vo) {
+	public void rent(int num) {
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		try {
@@ -66,8 +66,7 @@ public class BookShopDao {
 			psmt.setInt(1, num);
 
 			int count = psmt.executeUpdate();
-			
-			System.out.println(vo.getTitle()+"(가) 대여 됐습니다.");
+			System.out.println();
 
 		} catch (ClassNotFoundException e) {
 			System.out.println("드라이버 로딩 실패 : " + e);

@@ -57,7 +57,7 @@ public class BookShopApp {
 		System.out.print("대여 하고 싶은 책의 번호를 입력하세요.:");
 		int num = key.nextInt();
 		
-		dao.rent(num, vo);
+		dao.rent(num);
 		
 		displayBookInfo();
 	}
